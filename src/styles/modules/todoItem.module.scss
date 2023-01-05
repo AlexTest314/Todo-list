@@ -82,6 +82,27 @@
 	cursor: pointer;
 	transition: 0.3s ease background-color;
 	&:hover {
-		background-color: var(--gray-2);
+		background-color: var(--gray-1);
+	}
+}
+
+.todoStatus--new {
+	background-color: var(--bg-4);
+	&:hover {
+		background-color: var(--bg-4);
+	}
+}
+
+.todoStatus--pending {
+	background-color: var(--bg-5);
+	&:hover {
+		background-color: var(--bg-5);
+	}
+	
+}
+.todoStatus--done {
+	background-color: var(--bg-6);
+	&:hover {
+		background-color: var(--bg-6);
 	}
 }

@@ -2,7 +2,7 @@
 *::after,
 *::before {
 	box-sizing: border-box;
-	margin: 0;
+	margin: 2px;
 	padding: 0;
 }
 :root {
@@ -16,6 +16,10 @@
 	--gray-2: #dedfe1;
 	--black: black;
 	--white: white;
+	--bg-4: #b1b1f7;
+	--bg-5: #efb953;
+	--bg-6: #75e675;
+
 }
 html {
 	font-size: 10px;
@@ -31,6 +35,6 @@ body {
 }
 .container {
 	width: 90%;
-	max-width: 1200px;
+	max-width: max-content;
 	margin: 0 auto;
 }
