@@ -1,14 +1,15 @@
-import React from "react";
 import styles from "../styles/modules/button.module.scss";
 import { getClasses } from "../utils/getClasses";
 
-function SearchFilter({ id, ...rest }) {
+function SearchFilter({ onChange }) {
   return (
     <div>
       <input
-        type="text"
+        type='text'
         className={getClasses([styles.button, styles.button__select])}
-        {...rest}
+        id='search'
+        placeholder={"Filter by title"}
+        onChange={onChange}
       />
     </div>
   );

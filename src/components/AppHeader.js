@@ -2,29 +2,41 @@ import React, { useState } from "react";
 import Button from "./Button";
 import styles from "../styles/modules/app.module.scss";
 import TodoModal from "./TodoModal";
-/* import SearchFilter from "./SearchFilter";
-import { useSelector } from "react-redux";
-import AppContent from "./AppContent"; */
+import SearchFilter from "./SearchFilter";
+import { useDispatch, useSelector } from "react-redux";
+import { editSearchFilter } from "../slices/todoSlice";
+import { inputValueInit } from "../app/utils";
 
 function AppHeader() {
-  //const filterStatus = useSelector(state => state.todo.filterStatus);
-  //const todoList = useSelector(state => state.todo.todoList);
+  const inputValue = useSelector(inputValueInit);
   const [modalOpen, setModalOpen] = useState(false);
 
-  return (
-    <div className={styles.appHeader}>
-      <Button variant="primary" onClick={() => setModalOpen(true)}>
-        Add Task
-      </Button>
+  const dispatch = useDispatch();
 
-      {/*  <SelectButton id="status" value={filterStatus} onChange={updateFilter}>
-        <option value="all">ALL</option>
-        <option value="new">New</option>
-        <option value="pending">Pending</option>
-        <option value="done">Done</option>
-      </SelectButton> */}
-      <TodoModal type="add" modalOpen={modalOpen} setModalOpen={setModalOpen} />
-    </div>
+  const searchFilter = (e) => {
+    dispatch(editSearchFilter(e.target.value.toLowerCase()));
+  };
+
+  return (
+    <>
+      <div className={styles.appHeader}>
+        <Button
+          variant='primary'
+          onClick={() => setModalOpen(true)}>
+          Add Task
+        </Button>
+        <SearchFilter
+          id='filter'
+          value={inputValue}
+          onChange={searchFilter}
+        />
+        <TodoModal
+          type='add'
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+        />
+      </div>
+    </>
   );
 }
 
