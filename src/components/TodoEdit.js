@@ -22,7 +22,7 @@ function TodoEdit({ type, updateModeOpen, setModeOpen, todo }) {
 
   const dispatch = useDispatch();
   useEffect(() => {
-    if (type === "update" && todo) {
+    if (type === "edit" && todo) {
       setTitle(todo.title);
       setStatus(todo.status);
     } else {
@@ -38,7 +38,7 @@ function TodoEdit({ type, updateModeOpen, setModeOpen, todo }) {
       return;
     }
     if (title && status) {
-      if (type === "update") {
+      if (type === "edit") {
         if (todo.title !== title || todo.status !== status) {
           dispatch(
             updateTodo({

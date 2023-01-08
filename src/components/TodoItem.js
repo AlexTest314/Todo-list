@@ -50,7 +50,7 @@ function TodoItem({ todo }) {
     <>
       {updateModeOpen ? (
         <TodoEdit
-          type='update'
+          type='edit'
           updateModeOpen={updateModeOpen}
           setModeOpen={setUpdateModeOpen}
           todo={todo}
