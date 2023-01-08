@@ -24,7 +24,7 @@ function TodoItem({ todo }) {
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
   useEffect(() => {
-	if(todo.status === 'complete') {
+	if(todo.status === 'done') {
 		setChecked(true);
 	} else {
 		setChecked(false);
@@ -42,7 +42,7 @@ function TodoItem({ todo }) {
 	setChecked(!checked);
 	dispatch(updateTodo({
 		...todo,
-		status: checked ? 'incomplete' : 'complete'
+		status: checked ? 'pending' : 'done'
 	}))
   }
   return (
@@ -54,7 +54,7 @@ function TodoItem({ todo }) {
           <p
             className={getClasses([
               styles.todoText,
-              todo.status === "complete" && styles["todoText--completed"]
+              todo.status === "done" && styles["todoText--completed"]
             ])}
           >
             {todo.title}
@@ -64,6 +64,16 @@ function TodoItem({ todo }) {
           </p>
         </div>
       </div>
+      <div className={getClasses([
+              styles.icon,
+              todo.status === "done" && styles["todoStatus--done"],
+              todo.status === "new" && styles["todoStatus--new"],
+              todo.status === "pending" && styles["todoStatus--pending"]
+            ])} 
+      
+      >
+        {todo.status}
+      </div>
       <div className={styles.todoActions}>
         <div
           className={styles.icon}
@@ -72,6 +82,7 @@ function TodoItem({ todo }) {
           role="button"
           tabIndex={0}
         >
+          
           <MdDelete />
         </div>
         <div
@@ -85,6 +96,7 @@ function TodoItem({ todo }) {
         </div>
       </div>
     </motion.div>
+    
 	 <TodoModal type= 'update' modalOpen={updateModalOpen} setModalOpen={setUpdateModalOpen} todo={todo}/>	
 	 </>
   );

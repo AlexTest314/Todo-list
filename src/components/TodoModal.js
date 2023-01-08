@@ -32,7 +32,7 @@ const dropIn = {
 
 function TodoModal({ type, modalOpen, setModalOpen, todo }) {
   const [title, setTitle] = useState("");
-  const [status, setStatus] = useState("Incomplete");
+  const [status, setStatus] = useState("New");
 
   const dispatch = useDispatch();
 
@@ -40,10 +40,10 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
     () => {
       if (type === "update" && todo) {
         setTitle(todo.title);
-        setStatus(todo.status);
+        setStatus("pending");
       } else {
         setTitle("");
-        setStatus("incomplete");
+        setStatus("new");
       }
     },
     [type, todo, modalOpen]
@@ -133,8 +133,12 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
                   value={status}
                   onChange={e => setStatus(e.target.value)}
                 >
-                  <option value="incomplete">Incomplete</option>
-                  <option value="complete">Complete</option>
+                  {type === "update"
+                    ? [
+                        <option value="pending">Pending</option>,
+                        <option value="done">Done</option>
+                      ]
+                    : <option value="new">New</option>}
                 </select>
               </label>
               <div className={styles.buttonContainer}>
