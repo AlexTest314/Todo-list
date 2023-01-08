@@ -36,20 +36,17 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
 
   const dispatch = useDispatch();
 
-  useEffect(
-    () => {
-      if (type === "update" && todo) {
-        setTitle(todo.title);
-        setStatus("pending");
-      } else {
-        setTitle("");
-        setStatus("new");
-      }
-    },
-    [type, todo, modalOpen]
-  );
+  useEffect(() => {
+    if (type === "update" && todo) {
+      setTitle(todo.title);
+      setStatus(todo.status);
+    } else {
+      setTitle("");
+      setStatus("new");
+    }
+  }, [type, todo, modalOpen]);
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (title === "") {
       toast.error("Please enter a title");
@@ -86,76 +83,72 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
   };
   return (
     <AnimatePresence>
-      {modalOpen &&
+      {modalOpen && (
         <motion.div
           className={styles.wrapper}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
+          exit={{ opacity: 0 }}>
           <motion.div
             className={styles.container}
             variants={dropIn}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
+            initial='hidden'
+            animate='visible'
+            exit='exit'>
             <motion.div
               className={styles.closeButton}
               onClick={() => setModalOpen(false)}
               onKeyDown={() => setModalOpen(false)}
-              tabIndex={0}
-              role="button"
+              role='button'
               initial={{ top: 40, opacity: 0 }}
               animate={{ top: -10, opacity: 1 }}
-              exit={{ top: 40, opacity: 0 }}
-            >
+              exit={{ top: 40, opacity: 0 }}>
               <MdOutlineClose />
             </motion.div>
-            <form className={styles.form} onSubmit={e => handleSubmit(e)}>
+            <form
+              className={styles.form}
+              onSubmit={(e) => handleSubmit(e)}>
               <h1 className={styles.formTitle}>
                 {type === "update" ? "Update" : "Add"} Task
               </h1>
-              <label htmlFor="title">
+              <label htmlFor='title'>
                 Title
                 <input
-                  type="text"
-                  id="title"
+                  type='text'
+                  id='title'
                   value={title}
-                  onChange={e => setTitle(e.target.value)}
+                  onChange={(e) => setTitle(e.target.value)}
                 />
               </label>
-              <label htmlFor="type">
+              <label htmlFor='type'>
                 Status
                 <select
-                  name="status"
-                  id="status"
+                  name='status'
+                  id='status'
                   value={status}
-                  onChange={e => setStatus(e.target.value)}
-                >
-                  {type === "update"
-                    ? [
-                        <option value="pending">Pending</option>,
-                        <option value="done">Done</option>
-                      ]
-                    : <option value="new">New</option>}
+                  onChange={(e) => setStatus(e.target.value)}>
+                  <option value='pending'>Pending</option>
+                  <option value='done'>Done</option>
+                  <option value='new'>New</option>
                 </select>
               </label>
               <div className={styles.buttonContainer}>
-                <Button type="submit" variant="primary">
+                <Button
+                  type='submit'
+                  variant='primary'>
                   {type === "update" ? "Update" : "Add"} Task
                 </Button>
                 <Button
-                  variant="secondary"
+                  variant='secondary'
                   onClick={() => setModalOpen(false)}
-                  onKeyDown={() => setModalOpen(false)}
-                >
+                  onKeyDown={() => setModalOpen(false)}>
                   Cancel
                 </Button>
               </div>
             </form>
           </motion.div>
-        </motion.div>}
+        </motion.div>
+      )}
     </AnimatePresence>
   );
 }
