@@ -63,7 +63,8 @@ function Column({ status, inputValue }) {
       updateTodo({
         id,
         title,
-        status
+        status,
+        time: new Date().toLocaleString()
       })
     );
   };
