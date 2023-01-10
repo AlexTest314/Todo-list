@@ -1,10 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
-import React from "react";
-import { useSelector } from "react-redux";
 import { todoListInit } from "../app/utils";
 import styles from "../styles/modules/app.module.scss";
 import { getClasses } from "../utils/getClasses";
 import TodoItem from "./TodoItem";
+import { useDrop } from "react-dnd";
+import { useDispatch, useSelector } from "react-redux";
+import { updateTodo } from "../slices/todoSlice";
 
 const child = {
   hidden: { y: 20, opacity: 0 },
@@ -28,6 +29,7 @@ const container = {
 function Column({ status, inputValue }) {
   const todoList = useSelector(todoListInit);
   const sortedTodoList = [...todoList];
+  const dispatch = useDispatch();
 
   sortedTodoList.sort((a, b) => new Date(b.time) - new Date(a.time));
 
@@ -45,9 +47,33 @@ function Column({ status, inputValue }) {
 
   const fullFilter = filterStatus(filterTitle, status);
 
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: "div",
+    drop: (item) => addTodoToColumn(item.id),
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver()
+    })
+  }));
+
+  const addTodoToColumn = (id) => {
+    const todoListDrop = todoList.filter((todo) => id === todo.id);
+    const title = todoListDrop[0].title;
+
+    dispatch(
+      updateTodo({
+        id,
+        title,
+        status,
+        time: new Date().toLocaleString()
+      })
+    );
+  };
+
   return (
     <>
       <motion.div
+        ref={drop}
+        style={{ border: isOver ? "5px solid pink" : "0px" }}
         className={styles.content__wrapper}
         variants={container}
         initial='hidden'

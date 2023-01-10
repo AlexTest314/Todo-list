@@ -4,6 +4,8 @@ import AppHeader from "./components/AppHeader";
 import PageTitle from "./components/PageTitle";
 import styles from "./styles/modules/app.module.scss";
 import { Toaster } from "react-hot-toast";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 function App() {
   return (
@@ -12,8 +14,9 @@ function App() {
         <PageTitle title={"TODO LIST"}></PageTitle>
         <div className={styles.app__wrapper}>
           <AppHeader />
-
-          <AppContent />
+          <DndProvider backend={HTML5Backend}>
+            <AppContent />
+          </DndProvider>
         </div>
       </div>
       <Toaster

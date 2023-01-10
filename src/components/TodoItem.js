@@ -9,6 +9,7 @@ import styles from "../styles/modules/todoItem.module.scss";
 import CheckButton from "./CheckButton";
 import TodoEdit from "./TodoEdit";
 import Button from "./Button";
+import { useDrag } from "react-dnd";
 
 const child = {
   hidden: { y: 20, opacity: 0 },
@@ -18,7 +19,15 @@ const child = {
   }
 };
 
-function TodoItem({ todo }) {
+function TodoItem({ todo, status }) {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: "div",
+    item: { id: todo.id },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging()
+    })
+  }));
+
   const dispatch = useDispatch();
   const [checked, setChecked] = useState(false);
   const [updateModeOpen, setUpdateModeOpen] = useState(false);
@@ -58,6 +67,8 @@ function TodoItem({ todo }) {
         />
       ) : (
         <motion.div
+          style={{ border: isDragging ? "5px solid pink" : "0px" }}
+          ref={drag}
           className={styles.item}
           variants={child}>
           <div className={styles.todoDetails}>
