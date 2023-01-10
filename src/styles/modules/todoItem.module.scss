@@ -70,6 +70,19 @@
   justify-content: center;
   gap: 1rem;
 }
+
+.itemButton {
+  font-size: 2rem;
+  border-radius: 4px;
+  background-color: var(--gray-1);
+  color: var(--black-2);
+  cursor: pointer;
+  transition: 0.3s ease background-color;
+  &:hover {
+    background-color: var(--gray-1);
+  }
+}
+
 .icon {
   font-size: 2rem;
   padding: 0.5rem;

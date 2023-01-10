@@ -52,11 +52,7 @@ function Column({ status, inputValue }) {
         variants={container}
         initial='hidden'
         animate='visible'>
-        <div
-          className={getClasses([
-            styles.icon,
-            styles[`todoStatus--${status}`]
-          ])}>
+        <div className={getClasses([styles[`todoStatus--${status}`]])}>
           {status}
         </div>
         <AnimatePresence>
@@ -68,11 +64,13 @@ function Column({ status, inputValue }) {
               />
             ))
           ) : (
-            <motion.p
-              className={styles.emptyText}
-              variants={child}>
-              No Todo Found
-            </motion.p>
+            <div className={styles.emptyText__wrapper}>
+              <motion.p
+                className={styles.emptyText}
+                variants={child}>
+                No Todo Found
+              </motion.p>
+            </div>
           )}
         </AnimatePresence>
       </motion.div>

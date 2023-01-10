@@ -7,6 +7,7 @@ import { RxCross2 } from "react-icons/rx";
 import toast from "react-hot-toast";
 import { updateTodo } from "../slices/todoSlice";
 import { useDispatch } from "react-redux";
+import Button from "./Button";
 
 const child = {
   hidden: { y: 20, opacity: 0 },
@@ -31,7 +32,7 @@ function TodoEdit({ type, updateModeOpen, setModeOpen, todo }) {
     }
   }, [type, todo, updateModeOpen]);
 
-  const handleSubmit = (e) => {
+  const handleAgree = (e) => {
     e.preventDefault();
     if (title === "") {
       toast.error("Please enter a title");
@@ -77,20 +78,20 @@ function TodoEdit({ type, updateModeOpen, setModeOpen, todo }) {
             </div>
           </div>
           <div className={styles.todoActions}>
-            <div
+            <Button
               className={styles.iconCheck}
-              onClick={handleSubmit}
-              onKeyDown={handleSubmit}
-              role='button'>
+              onClick={handleAgree}
+              onKeyDown={handleAgree}
+              type='button'>
               <MdCheck />
-            </div>
-            <div
+            </Button>
+            <Button
               className={styles.iconCancel}
               onClick={() => setModeOpen(false)}
               onKeyDown={() => setModeOpen(false)}
-              role='button'>
+              type='button'>
               <RxCross2 />
-            </div>
+            </Button>
           </div>
         </motion.div>
       </AnimatePresence>

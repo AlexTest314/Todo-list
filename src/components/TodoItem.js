@@ -8,6 +8,7 @@ import { deleteTodo, updateTodo } from "../slices/todoSlice";
 import styles from "../styles/modules/todoItem.module.scss";
 import CheckButton from "./CheckButton";
 import TodoEdit from "./TodoEdit";
+import Button from "./Button";
 
 const child = {
   hidden: { y: 20, opacity: 0 },
@@ -72,20 +73,28 @@ function TodoItem({ todo }) {
             </div>
           </div>
           <div className={styles.todoActions}>
-            <div
+            <Button
               className={styles.icon}
               onClick={handleDelete}
               onKeyDown={handleDelete}
-              role='button'>
+              type='button'>
               <MdDelete />
-            </div>
-            <div
+            </Button>
+            <Button
+              className={styles.itemButton}
+              onClick={handleUpdate}
+              onKeyDown={handleUpdate}
+              type='button'>
+              <MdEdit />
+            </Button>
+
+            {/* <div
               className={styles.icon}
               onClick={handleUpdate}
               onKeyDown={handleUpdate}
               role='button'>
               <MdEdit />
-            </div>
+            </div> */}
           </div>
         </motion.div>
       )}
