@@ -1,15 +1,15 @@
-import styles from "../styles/modules/button.module.scss";
-import { getClasses } from "../utils/getClasses";
+import styles from "../styles/modules/search.module.scss";
 
-function SearchFilter({ onChange }) {
+function SearchFilter({ onChange, disabled }) {
   return (
     <div>
       <input
         type='text'
-        className={getClasses([styles.button, styles.button__select])}
+        className={disabled ? styles.search__disabled : styles.search}
         id='search'
         placeholder={"Filter by title"}
         onChange={onChange}
+        disabled={disabled}
       />
     </div>
   );

@@ -1,80 +1,59 @@
 import { motion } from "framer-motion";
 import { format } from "date-fns/esm";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { MdDelete, MdEdit } from "react-icons/md";
 import { useDispatch } from "react-redux";
-import { deleteTodo, updateTodo } from "../slices/todoSlice";
+import { deleteTodo } from "../slices/todoSlice";
 import styles from "../styles/modules/todoItem.module.scss";
-import CheckButton from "./CheckButton";
 import TodoEdit from "./TodoEdit";
+import Button from "./Button";
 import { useDrag } from "react-dnd";
 
 const child = {
-  hidden: { y: 20, opacity: 0 },
+  hidden: { y: 20, opacity: 0.75 },
   visible: {
     y: 0,
     opacity: 1
   }
 };
 
-function TodoItem({ todo, status }) {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: "div",
-    item: { id: todo.id },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging()
-    })
-  }));
-
+function TodoItem({ todo, tableDisabled, setTableDisabled }) {
   const dispatch = useDispatch();
-  const [checked, setChecked] = useState(false);
-  const [updateModeOpen, setUpdateModeOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
-  useEffect(() => {
-    if (todo.status === "done") {
-      setChecked(true);
-    } else {
-      setChecked(false);
-    }
-  }, [todo.status]);
+  const [{ isDragging }, drag] = useDrag(
+    () => ({
+      type: "div",
+      item: { id: todo.id, title: todo.title },
+      collect: (monitor) => ({
+        isDragging: !!monitor.isDragging()
+      })
+    }),
+    [todo]
+  );
+
   const handleDelete = () => {
     dispatch(deleteTodo(todo.id));
     toast.success("Todo Deleted Successfully");
   };
-  const handleUpdate = () => {
-    setUpdateModeOpen(true);
-  };
 
-  const handleCheck = () => {
-    setChecked(!checked);
-    dispatch(
-      updateTodo({
-        ...todo,
-        status: checked ? "new" : "done"
-      })
-    );
-  };
   return (
     <>
-      {updateModeOpen ? (
+      {isEdit ? (
         <TodoEdit
-          type='edit'
-          updateModeOpen={updateModeOpen}
-          setModeOpen={setUpdateModeOpen}
+          setIsEdit={setIsEdit}
           todo={todo}
+          setTableDisabled={setTableDisabled}
         />
       ) : (
         <motion.div
           style={{ border: isDragging ? "5px solid pink" : "0px" }}
+          className={tableDisabled ? styles.item__disabled : styles.item}
           ref={drag}
-          className={styles.item}
-          variants={child}>
+          draggable={tableDisabled ? "false" : "true"}
+          variants={tableDisabled ? child.hidden : child.visible}>
           <div className={styles.todoDetails}>
-            <CheckButton
-              checked={checked}
-              handleCheck={handleCheck}
-            />
             <div className={styles.text}>
               <p className={styles.todoText}>{todo.title}</p>
               <p className={styles.time}>
@@ -83,20 +62,24 @@ function TodoItem({ todo, status }) {
             </div>
           </div>
           <div className={styles.todoActions}>
-            <div
+            <Button
+              disabled={tableDisabled}
+              variant={tableDisabled ? "disabled" : "edit"}
               className={styles.icon}
               onClick={handleDelete}
-              onKeyDown={handleDelete}
-              role='button'>
+              type='button'>
               <MdDelete />
-            </div>
-            <div
-              className={styles.icon}
-              onClick={handleUpdate}
-              onKeyDown={handleUpdate}
-              role='button'>
+            </Button>
+            <Button
+              disabled={tableDisabled}
+              variant={tableDisabled ? "disabled" : "edit"}
+              onClick={() => {
+                setTableDisabled(true);
+                setIsEdit(true);
+              }}
+              type='button'>
               <MdEdit />
-            </div>
+            </Button>
           </div>
         </motion.div>
       )}

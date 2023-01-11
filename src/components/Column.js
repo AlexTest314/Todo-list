@@ -1,10 +1,9 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { todoListInit } from "../app/utils";
 import styles from "../styles/modules/app.module.scss";
 import { getClasses } from "../utils/getClasses";
 import TodoItem from "./TodoItem";
 import { useDrop } from "react-dnd";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { updateTodo } from "../slices/todoSlice";
 
 const child = {
@@ -26,14 +25,16 @@ const container = {
   }
 };
 
-function Column({ status, inputValue }) {
-  const todoList = useSelector(todoListInit);
-  const sortedTodoList = [...todoList];
+function Column({
+  status,
+  inputValue,
+  filteredList,
+  tableDisabled,
+  setTableDisabled
+}) {
   const dispatch = useDispatch();
 
-  sortedTodoList.sort((a, b) => new Date(b.time) - new Date(a.time));
-
-  const filterTitle = sortedTodoList.filter((todo) => {
+  const filterTitles = filteredList.filter((todo) => {
     if (inputValue === "") {
       return todo;
     } else {
@@ -41,24 +42,7 @@ function Column({ status, inputValue }) {
     }
   });
 
-  const filterStatus = (todoList, status) => {
-    return todoList.filter((todo) => todo.status === status);
-  };
-
-  const fullFilter = filterStatus(filterTitle, status);
-
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: "div",
-    drop: (item) => addTodoToColumn(item.id),
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver()
-    })
-  }));
-
-  const addTodoToColumn = (id) => {
-    const todoListDrop = todoList.filter((todo) => id === todo.id);
-    const title = todoListDrop[0].title;
-
+  const addTodoToColumn = (id, title) => {
     dispatch(
       updateTodo({
         id,
@@ -69,6 +53,17 @@ function Column({ status, inputValue }) {
     );
   };
 
+  const [{ isOver }, drop] = useDrop(
+    () => ({
+      accept: "div",
+      drop: (item) => addTodoToColumn(item.id, item.title),
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver()
+      })
+    }),
+    [filteredList]
+  );
+
   return (
     <>
       <motion.div
@@ -78,27 +73,27 @@ function Column({ status, inputValue }) {
         variants={container}
         initial='hidden'
         animate='visible'>
-        <div
-          className={getClasses([
-            styles.icon,
-            styles[`todoStatus--${status}`]
-          ])}>
+        <div className={getClasses([styles[`todoStatus--${status}`]])}>
           {status}
         </div>
         <AnimatePresence>
-          {fullFilter.length > 0 ? (
-            fullFilter.map((todo) => (
+          {filterTitles.length > 0 ? (
+            filterTitles.map((todo) => (
               <TodoItem
+                tableDisabled={tableDisabled}
+                setTableDisabled={setTableDisabled}
                 key={todo.id}
                 todo={todo}
               />
             ))
           ) : (
-            <motion.p
-              className={styles.emptyText}
-              variants={child}>
-              No Todo Found
-            </motion.p>
+            <div className={styles.emptyText__wrapper}>
+              <motion.p
+                className={styles.emptyText}
+                variants={child}>
+                No Todo Found
+              </motion.p>
+            </div>
           )}
         </AnimatePresence>
       </motion.div>

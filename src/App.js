@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AppContent from "./components/AppContent";
 import AppHeader from "./components/AppHeader";
 import PageTitle from "./components/PageTitle";
@@ -8,14 +8,23 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 function App() {
+  const [searchValue, setSearchValue] = useState("");
+  const [tableDisabled, setTableDisabled] = useState(false);
   return (
     <>
       <div className='container'>
         <PageTitle title={"TODO LIST"}></PageTitle>
         <div className={styles.app__wrapper}>
-          <AppHeader />
+          <AppHeader
+            setSearchValue={setSearchValue}
+            tableDisabled={tableDisabled}
+          />
           <DndProvider backend={HTML5Backend}>
-            <AppContent />
+            <AppContent
+              searchValue={searchValue}
+              tableDisabled={tableDisabled}
+              setTableDisabled={setTableDisabled}
+            />
           </DndProvider>
         </div>
       </div>

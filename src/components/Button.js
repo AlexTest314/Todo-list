@@ -4,10 +4,16 @@ import { getClasses } from "../utils/getClasses";
 
 const buttonTypes = {
   primary: "primary",
-  secondary: "secondary"
+  primary__disabled: "primary__disabled",
+  secondary: "secondary",
+  agree: "agree",
+  desagree: "desagree",
+  delete: "delete",
+  edit: "edit",
+  disabled: "disabled"
 };
 
-function Button({ children, type, variant, onClick }) {
+function Button({ children, type, variant, onClick, disabled }) {
   return (
     <button
       className={getClasses([
@@ -15,7 +21,8 @@ function Button({ children, type, variant, onClick }) {
         styles[`button--${buttonTypes[variant]}`]
       ])}
       type={type === "submit" ? "submit" : "button"}
-      onClick={onClick}>
+      onClick={onClick}
+      disabled={disabled}>
       {children}
     </button>
   );
