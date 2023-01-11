@@ -1,0 +1,30 @@
+.search {
+  display: inline-block;
+  height: auto;
+  padding: 1rem;
+  width: 150px;
+  border: none;
+  font-family: Poppins;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 1.6rem;
+  color: var(--black-2);
+  background-color: var(--bg-3);
+  cursor: pointer;
+  overflow: hidden;
+  &__disabled {
+    display: inline-block;
+    height: auto;
+    padding: 1rem;
+    width: 150px;
+    border: none;
+    font-family: Poppins;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 1.6rem;
+    color: var(--black-2);
+    background-color: var(--bg-3);
+    overflow: hidden;
+    opacity: 0.5;
+  }
+}

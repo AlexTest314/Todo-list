@@ -3,35 +3,28 @@ import Button from "./Button";
 import styles from "../styles/modules/app.module.scss";
 import TodoModal from "./TodoModal";
 import SearchFilter from "./SearchFilter";
-import { useDispatch, useSelector } from "react-redux";
-import { editSearchFilter } from "../slices/todoSlice";
-import { inputValueInit } from "../app/utils";
 
-function AppHeader() {
-  const inputValue = useSelector(inputValueInit);
+function AppHeader({ setSearchValue, tableDisabled }) {
   const [modalOpen, setModalOpen] = useState(false);
 
-  const dispatch = useDispatch();
-
-  const searchFilter = (e) => {
-    dispatch(editSearchFilter(e.target.value.toLowerCase()));
-  };
+  console.log("tableDisabled", tableDisabled);
 
   return (
     <>
       <div className={styles.appHeader}>
         <Button
-          variant='primary'
+          variant={tableDisabled ? "primary__disabled" : "primary"}
+          disabled={tableDisabled}
           onClick={() => setModalOpen(true)}>
           Add Task
         </Button>
         <SearchFilter
+          disabled={tableDisabled}
           id='filter'
-          value={inputValue}
-          onChange={searchFilter}
+          value={setSearchValue}
+          onChange={(e) => setSearchValue(e.target.value.toLowerCase())}
         />
         <TodoModal
-          type='add'
           modalOpen={modalOpen}
           setModalOpen={setModalOpen}
         />

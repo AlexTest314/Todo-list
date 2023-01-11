@@ -8,6 +8,16 @@
   background: var(--white);
   margin-bottom: 1.5rem;
   border-radius: 4px;
+  &__disabled {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--white);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+    opacity: 0.5;
+  }
   &:last-child {
     margin-bottom: 0;
   }
@@ -19,6 +29,7 @@
   gap: 1rem;
 }
 .svgBox {
+  margin-top: 4px;
   flex-basis: 25px;
   flex-shrink: 0;
   height: 25px;
@@ -71,18 +82,6 @@
   gap: 1rem;
 }
 
-.itemButton {
-  font-size: 2rem;
-  border-radius: 4px;
-  background-color: var(--gray-1);
-  color: var(--black-2);
-  cursor: pointer;
-  transition: 0.3s ease background-color;
-  &:hover {
-    background-color: var(--gray-1);
-  }
-}
-
 .icon {
   font-size: 2rem;
   padding: 0.5rem;
@@ -96,38 +95,6 @@
   transition: 0.3s ease background-color;
   &:hover {
     background-color: var(--gray-1);
-  }
-}
-
-.iconCheck {
-  font-size: 2rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-  background-color: var(--bg-6);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: 0.3s ease background-color;
-  &:hover {
-    background-color: #31ff03;
-  }
-}
-
-.iconCancel {
-  font-size: 2rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-  background-color: #e32525;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: 0.3s ease background-color;
-  &:hover {
-    background-color: #ff0000;
   }
 }
 

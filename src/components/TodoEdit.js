@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { format } from "date-fns/esm";
 import { AnimatePresence, motion } from "framer-motion";
 import styles from "../styles/modules/todoItem.module.scss";
@@ -17,44 +17,36 @@ const child = {
   }
 };
 
-function TodoEdit({ type, updateModeOpen, setModeOpen, todo }) {
-  const [title, setTitle] = useState("");
-  const [status, setStatus] = useState("New");
+function TodoEdit({ setIsEdit, todo, setTableDisabled }) {
+  const [title, setTitle] = useState(todo.title);
 
   const dispatch = useDispatch();
-  useEffect(() => {
-    if (type === "edit" && todo) {
-      setTitle(todo.title);
-      setStatus(todo.status);
-    } else {
-      setTitle("");
-      setStatus("new");
-    }
-  }, [type, todo, updateModeOpen]);
 
   const handleAgree = (e) => {
     e.preventDefault();
     if (title === "") {
       toast.error("Please enter a title");
       return;
+    } else if (todo.title !== title) {
+      dispatch(
+        updateTodo({
+          ...todo,
+          title
+        })
+      );
+      setIsEdit(false);
+      setTableDisabled(false);
+    } else {
+      toast.error("No Changes Made");
+
+      return;
     }
-    if (title && status) {
-      if (type === "edit") {
-        if (todo.title !== title || todo.status !== status) {
-          dispatch(
-            updateTodo({
-              ...todo,
-              title,
-              status
-            })
-          );
-        } else {
-          toast.error("No Changes Made");
-          return;
-        }
-      }
-      setModeOpen(false);
-    }
+  };
+
+  const handleDesagree = (e) => {
+    e.preventDefault();
+    setIsEdit(false);
+    setTableDisabled(false);
   };
 
   return (
@@ -71,6 +63,7 @@ function TodoEdit({ type, updateModeOpen, setModeOpen, todo }) {
                 id='title'
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                onKeyDown={(e) => (e.key === "Enter" ? handleAgree(e) : null)}
               />
               <p className={styles.time}>
                 {format(new Date(todo.time), "p, MM/dd/yyyy")}
@@ -79,16 +72,16 @@ function TodoEdit({ type, updateModeOpen, setModeOpen, todo }) {
           </div>
           <div className={styles.todoActions}>
             <Button
-              className={styles.iconCheck}
+              variant='agree'
               onClick={handleAgree}
               onKeyDown={handleAgree}
               type='button'>
               <MdCheck />
             </Button>
             <Button
-              className={styles.iconCancel}
-              onClick={() => setModeOpen(false)}
-              onKeyDown={() => setModeOpen(false)}
+              variant='desagree'
+              onClick={handleDesagree}
+              onKeyDown={handleDesagree}
               type='button'>
               <RxCross2 />
             </Button>

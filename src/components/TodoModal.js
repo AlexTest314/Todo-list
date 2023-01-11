@@ -4,7 +4,7 @@ import styles from "../styles/modules/modal.module.scss";
 import { MdOutlineClose } from "react-icons/md";
 import { useDispatch } from "react-redux";
 import Button from "./Button";
-import { addTodo, updateTodo } from "../slices/todoSlice";
+import { addTodo } from "../slices/todoSlice";
 import { v4 as uuid } from "uuid";
 import toast from "react-hot-toast";
 import { AnimatePresence } from "framer-motion";
@@ -37,14 +37,9 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (type === "update" && todo) {
-      setTitle(todo.title);
-      setStatus(todo.status);
-    } else {
-      setTitle("");
-      setStatus("new");
-    }
-  }, [type, todo, modalOpen]);
+    setTitle("");
+    setStatus("new");
+  }, [modalOpen]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -52,34 +47,17 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
       toast.error("Please enter a title");
       return;
     }
-    if (title && status) {
-      if (type === "add") {
-        dispatch(
-          addTodo({
-            id: uuid(),
-            title,
-            status,
-            time: new Date().toLocaleString()
-          })
-        );
-        toast.success("Task Added Successfully");
-      }
-      if (type === "update") {
-        if (todo.title !== title || todo.status !== status) {
-          dispatch(
-            updateTodo({
-              ...todo,
-              title,
-              status
-            })
-          );
-        } else {
-          toast.error("No Changes Made");
-          return;
-        }
-      }
-      setModalOpen(false);
-    }
+    dispatch(
+      addTodo({
+        id: uuid(),
+        title,
+        status,
+        time: new Date().toLocaleString()
+      })
+    );
+    toast.success("Task Added Successfully");
+
+    setModalOpen(false);
   };
   return (
     <AnimatePresence>
@@ -97,20 +75,21 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
             exit='exit'>
             <motion.div
               className={styles.closeButton}
-              onClick={() => setModalOpen(false)}
-              onKeyDown={() => setModalOpen(false)}
-              role='button'
               initial={{ top: 40, opacity: 0 }}
               animate={{ top: -10, opacity: 1 }}
               exit={{ top: 40, opacity: 0 }}>
-              <MdOutlineClose />
+              <Button
+                className={styles.closeButton}
+                onClick={() => setModalOpen(false)}
+                onKeyDown={() => setModalOpen(false)}
+                role='button'>
+                <MdOutlineClose />
+              </Button>
             </motion.div>
             <form
               className={styles.form}
               onSubmit={(e) => handleSubmit(e)}>
-              <h1 className={styles.formTitle}>
-                {type === "update" ? "Update" : "Add"} Task
-              </h1>
+              <h1 className={styles.formTitle}>Add Task</h1>
               <label htmlFor='title'>
                 Title
                 <input
@@ -136,7 +115,7 @@ function TodoModal({ type, modalOpen, setModalOpen, todo }) {
                 <Button
                   type='submit'
                   variant='primary'>
-                  {type === "update" ? "Update" : "Add"} Task
+                  Add Task
                 </Button>
                 <Button
                   variant='secondary'
