@@ -22,6 +22,7 @@ function TodoItem({ todo, tableDisabled, setTableDisabled }) {
   const dispatch = useDispatch();
   const [isEdit, setIsEdit] = useState(false);
 
+  const time = format(new Date(todo.time), "p, MM/dd/yyyy");
   const [{ isDragging }, drag] = useDrag(
     () => ({
       type: "div",
@@ -56,9 +57,7 @@ function TodoItem({ todo, tableDisabled, setTableDisabled }) {
           <div className={styles.todoDetails}>
             <div className={styles.text}>
               <p className={styles.todoText}>{todo.title}</p>
-              <p className={styles.time}>
-                {format(new Date(todo.time), "p, MM/dd/yyyy")}
-              </p>
+              <p className={styles.time}>{time}</p>
             </div>
           </div>
           <div className={styles.todoActions}>

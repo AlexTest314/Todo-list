@@ -48,7 +48,7 @@ function Column({
         id,
         title,
         status,
-        time: new Date().toLocaleString()
+        time: new Date().toUTCString()
       })
     );
   };
