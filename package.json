@@ -29,7 +29,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "homepage": "http://nikhilbaradwaj.github.io/ReactMultiDnD",
+  "homepage": "https://oleksiipry.github.io/Todo-list/",
   "eslintConfig": {
     "extends": [
       "react-app",
