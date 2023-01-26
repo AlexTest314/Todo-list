@@ -36,7 +36,6 @@ function TodoItem({
       copy.add(todo.id);
     } else {
       copy.forEach((item) => {
-        console.log("item", item);
         if (item === todo.id) {
           copy.delete(item);
         }
@@ -59,7 +58,6 @@ function TodoItem({
           index={index}>
           {(provided, snapshot) => (
             <>
-              {console.log("provided", provided)}
               <div
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
