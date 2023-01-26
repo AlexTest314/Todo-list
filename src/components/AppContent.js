@@ -4,7 +4,13 @@ import { todoListInit } from "../app/utils";
 import styles from "../styles/modules/app.module.scss";
 import Column from "./Column";
 
-function AppContent({ searchValue, tableDisabled, setTableDisabled }) {
+function AppContent({
+  searchValue,
+  tableDisabled,
+  setTableDisabled,
+  checkedItems,
+  setCheckedItems
+}) {
   const todoList = useSelector(todoListInit);
 
   const filteredTodos = todoList.reduce(
@@ -22,27 +28,21 @@ function AppContent({ searchValue, tableDisabled, setTableDisabled }) {
   return (
     <>
       <div className={styles.contentStatus__wrapper}>
-        <Column
-          status={STATUS_NEW}
-          tableDisabled={tableDisabled}
-          setTableDisabled={setTableDisabled}
-          inputValue={searchValue}
-          filteredList={filteredTodos[STATUS_NEW]}
-        />
-        <Column
-          status={STATUS_PENDING}
-          tableDisabled={tableDisabled}
-          setTableDisabled={setTableDisabled}
-          inputValue={searchValue}
-          filteredList={filteredTodos[STATUS_PENDING]}
-        />
-        <Column
-          status={STATUS_DONE}
-          tableDisabled={tableDisabled}
-          setTableDisabled={setTableDisabled}
-          inputValue={searchValue}
-          filteredList={filteredTodos[STATUS_DONE]}
-        />
+        {Object.entries(filteredTodos).map((columnStatus, index) => {
+          return (
+            <Column
+              key={index}
+              status={columnStatus[0]}
+              tableDisabled={tableDisabled}
+              setTableDisabled={setTableDisabled}
+              inputValue={searchValue}
+              filteredList={columnStatus[1]}
+              index={index}
+              setCheckedItems={setCheckedItems}
+              checkedItems={checkedItems}
+            />
+          );
+        })}
       </div>
     </>
   );

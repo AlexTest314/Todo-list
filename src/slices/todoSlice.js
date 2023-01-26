@@ -53,9 +53,7 @@ export const todoSlice = createSlice({
         const todoListArr = JSON.parse(todoList);
         todoListArr.forEach((todo, index) => {
           if (todo.id === action.payload.id) {
-            todo.title = action.payload.title;
-            todo.status = action.payload.status;
-            todo.time = action.payload.time;
+            todoListArr[index] = { ...todo, ...action.payload };
           }
         });
         window.localStorage.setItem("todoList", JSON.stringify(todoListArr));

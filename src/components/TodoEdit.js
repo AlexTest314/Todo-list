@@ -22,6 +22,8 @@ function TodoEdit({ setIsEdit, todo, setTableDisabled }) {
 
   const dispatch = useDispatch();
 
+  const time = format(new Date(todo.time), "p, MM/dd/yyyy");
+
   const handleAgree = (e) => {
     e.preventDefault();
     if (title === "") {
@@ -65,9 +67,7 @@ function TodoEdit({ setIsEdit, todo, setTableDisabled }) {
                 onChange={(e) => setTitle(e.target.value)}
                 onKeyDown={(e) => (e.key === "Enter" ? handleAgree(e) : null)}
               />
-              <p className={styles.time}>
-                {format(new Date(todo.time), "p, MM/dd/yyyy")}
-              </p>
+              <p className={styles.time}>{time}</p>
             </div>
           </div>
           <div className={styles.todoActions}>

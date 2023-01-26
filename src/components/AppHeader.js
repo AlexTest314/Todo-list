@@ -7,7 +7,6 @@ import SearchFilter from "./SearchFilter";
 function AppHeader({ setSearchValue, tableDisabled }) {
   const [modalOpen, setModalOpen] = useState(false);
 
-  console.log("tableDisabled", tableDisabled);
 
   return (
     <>
