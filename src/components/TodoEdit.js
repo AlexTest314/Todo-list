@@ -9,14 +9,6 @@ import { updateTodo } from "../slices/todoSlice";
 import { useDispatch } from "react-redux";
 import Button from "./Button";
 
-const child = {
-  hidden: { y: 20, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1
-  }
-};
-
 function TodoEdit({ setIsEdit, todo, setTableDisabled }) {
   const [title, setTitle] = useState(todo.title);
 
@@ -54,12 +46,11 @@ function TodoEdit({ setIsEdit, todo, setTableDisabled }) {
   return (
     <>
       <AnimatePresence>
-        <motion.div
-          className={styles.item}
-          variants={child}>
+        <motion.div className={styles.item}>
           <div>
             <div>
               <input
+                autoFocus
                 className={(styles.input, styles.input__select)}
                 type='text'
                 id='title'

@@ -9,7 +9,9 @@ function AppContent({
   tableDisabled,
   setTableDisabled,
   checkedItems,
-  setCheckedItems
+  setCheckedItems,
+  indexTodo,
+  setIndexTodo
 }) {
   const todoList = useSelector(todoListInit);
 
@@ -40,6 +42,8 @@ function AppContent({
               index={index}
               setCheckedItems={setCheckedItems}
               checkedItems={checkedItems}
+              indexTodo={indexTodo}
+              setIndexTodo={setIndexTodo}
             />
           );
         })}

@@ -11,7 +11,9 @@ function Column({
   setTableDisabled,
   filteredList,
   setCheckedItems,
-  checkedItems
+  checkedItems,
+  indexTodo,
+  setIndexTodo
 }) {
   const filterTitles = filteredList.filter((todo) => {
     if (inputValue === "") {
@@ -20,6 +22,17 @@ function Column({
       return todo.title.toLowerCase().includes(inputValue);
     }
   });
+
+  const found = filterTitles.find(
+    (item) => item.id === indexTodo.id && item.status === indexTodo.status
+  );
+  const reorderedTodos = Array.from(filterTitles);
+  if (found) {
+    const [removed] = reorderedTodos.splice(indexTodo.lastIndex, 1);
+    reorderedTodos.splice(indexTodo.newIndex, 0, removed);
+    setIndexTodo({});
+    console.log("newOrder", reorderedTodos);
+  }
 
   return (
     <>
@@ -41,9 +54,9 @@ function Column({
               }}
               ref={provided.innerRef}
               {...provided.droppableProps}>
-              {filterTitles.length > 0 ? (
+              {reorderedTodos.length > 0 ? (
                 <>
-                  {filterTitles.map((todo, index) => (
+                  {reorderedTodos.map((todo, index) => (
                     <TodoItem
                       tableDisabled={tableDisabled}
                       setTableDisabled={setTableDisabled}
