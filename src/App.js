@@ -13,21 +13,15 @@ function App() {
   const [tableDisabled, setTableDisabled] = useState(false);
   const [checkedItems, setCheckedItems] = useState(() => new Set());
   const [indexTodo, setIndexTodo] = useState({});
-  console.log("indexTodo", indexTodo);
 
   const dispatch = useDispatch();
 
-  const onDragStart = (provided, start) => {
-    console.log("provided", provided);
-    console.log("start", start);
-  };
+  const onDragStart = (provided) => {};
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
 
     const status = destination.droppableId;
-    console.log("newIndex", destination.index);
-    console.log("lastIndex", source.index);
 
     if (!destination) {
       return;

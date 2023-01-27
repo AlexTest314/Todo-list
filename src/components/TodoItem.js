@@ -18,9 +18,6 @@ function TodoItem({
   setCheckedItems,
   checkedItems
 }) {
-  //console.log("index", index);
-  //const newIndex = index + 1;
-  //console.log("newIndex", newIndex);
   const dispatch = useDispatch();
   const [checked, setChecked] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -46,6 +43,7 @@ function TodoItem({
     }
     setCheckedItems(() => new Set(copy));
   };
+
   return (
     <>
       {isEdit ? (
@@ -55,133 +53,54 @@ function TodoItem({
           setTableDisabled={setTableDisabled}
         />
       ) : (
-        <>
-          {checkedItems.size > 1 ? (
-            checkedItems.forEach((item) => {
-              <Draggable
-                key={item}
-                draggableId={"checked"}></Draggable>;
-            })
-          ) : (
-            <Draggable
-              key={todo.id}
-              draggableId={todo.id}
-              index={index}
-              /* index={newIndex} */
-            >
-              {(provided, snapshot) => (
-                <>
-                  {/* {console.log("index", index)} */}
-                  <div
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    ref={provided.innerRef}
-                    className={
-                      tableDisabled ? styles.item__disabled : styles.item
-                    }>
-                    <div className={styles.todoDetails}>
-                      <CheckButton
-                        checked={checked}
-                        handleCheck={handleCheck}
-                        disabled={tableDisabled}
-                        variant={
-                          tableDisabled ? "disabled" : "checkbox"
-                        }></CheckButton>
-                      <div className={styles.text}>
-                        <p className={styles.todoText}>{todo.title}</p>
-                        <p className={styles.time}>{time}</p>
-                      </div>
-                    </div>
-                    <div className={styles.todoActions}>
-                      <Button
-                        disabled={tableDisabled}
-                        variant={tableDisabled ? "disabled" : "edit"}
-                        className={styles.icon}
-                        onClick={handleDelete}
-                        type='button'>
-                        <MdDelete />
-                      </Button>
-                      <Button
-                        disabled={tableDisabled}
-                        variant={tableDisabled ? "disabled" : "edit"}
-                        onClick={() => {
-                          setTableDisabled(true);
-                          setIsEdit(true);
-                        }}
-                        type='button'>
-                        <MdEdit />
-                      </Button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </Draggable>
-          )}
-          {/* <Draggable
-            draggableId={"checked"}
-            index={index}>
-            {(provided) => (
+        <Draggable
+          key={todo.id}
+          draggableId={todo.id}
+          index={index}>
+          {(provided, snapshot) => (
+            <>
               <div
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
                 ref={provided.innerRef}
                 className={tableDisabled ? styles.item__disabled : styles.item}>
-                <div>
-                  <Draggable
-                    draggableId={"checked"}
-                    index={index}>
-                    {(provided) => (
-                      <div
-                        {...provided.dragHandleProps}
-                        {...provided.draggableProps}
-                        ref={provided.innerRef}
-                        className={
-                          tableDisabled ? styles.item__disabled : styles.item
-                        }>
-                        <div className={styles.todoDetails}>
-                          <CheckButton
-                            checked={checked}
-                            handleCheck={handleCheck}
-                            disabled={tableDisabled}
-                            variant={
-                              tableDisabled ? "disabled" : "checkbox"
-                            }></CheckButton>
-                          <div className={styles.text}>
-                            <p className={styles.todoText}>{todo.title}</p>
-                            <p className={styles.time}>{time}</p>
-                          </div>
-                        </div>
-                        <div className={styles.todoActions}>
-                          <Button
-                            disabled={tableDisabled}
-                            variant={tableDisabled ? "disabled" : "edit"}
-                            className={styles.icon}
-                            onClick={handleDelete}
-                            type='button'>
-                            <MdDelete />
-                          </Button>
-                          <Button
-                            disabled={tableDisabled}
-                            variant={tableDisabled ? "disabled" : "edit"}
-                            onClick={() => {
-                              setTableDisabled(true);
-                              setIsEdit(true);
-                            }}
-                            type='button'>
-                            <MdEdit />
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </Draggable>
-                  {/* <div>123</div>
-                  <div>123</div>
-                  <div>123</div> */}
-          {/*   </div>
-              </div> */}
-          {/* )}
-          </Draggable> */}
-        </>
+                <div className={styles.todoDetails}>
+                  <CheckButton
+                    checked={checked}
+                    handleCheck={handleCheck}
+                    disabled={tableDisabled}
+                    variant={
+                      tableDisabled ? "disabled" : "checkbox"
+                    }></CheckButton>
+                  <div className={styles.text}>
+                    <p className={styles.todoText}>{todo.title}</p>
+                    <p className={styles.time}>{time}</p>
+                  </div>
+                </div>
+                <div className={styles.todoActions}>
+                  <Button
+                    disabled={tableDisabled}
+                    variant={tableDisabled ? "disabled" : "edit"}
+                    className={styles.icon}
+                    onClick={handleDelete}
+                    type='button'>
+                    <MdDelete />
+                  </Button>
+                  <Button
+                    disabled={tableDisabled}
+                    variant={tableDisabled ? "disabled" : "edit"}
+                    onClick={() => {
+                      setTableDisabled(true);
+                      setIsEdit(true);
+                    }}
+                    type='button'>
+                    <MdEdit />
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </Draggable>
       )}
     </>
   );

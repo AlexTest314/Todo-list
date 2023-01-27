@@ -31,7 +31,6 @@ function Column({
     const [removed] = reorderedTodos.splice(indexTodo.lastIndex, 1);
     reorderedTodos.splice(indexTodo.newIndex, 0, removed);
     setIndexTodo({});
-    console.log("newOrder", reorderedTodos);
   }
 
   return (
@@ -67,6 +66,7 @@ function Column({
                       checkedItems={checkedItems}
                     />
                   ))}
+
                   {provided.placeholder}
                 </>
               ) : (
