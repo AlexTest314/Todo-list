@@ -10,13 +10,43 @@ import Button from "./Button";
 import { Draggable } from "react-beautiful-dnd";
 import CheckButton from "./CheckButton";
 
+const boxMultipleShadowDragging = {
+  new: {
+    boxShadow:
+      "rgba(177, 177, 247, 0.9) 5px 5px 2px 0px, rgba(177, 177, 247, 0.5) 10px 10px 2px 0px,rgba(177, 177, 247, 0.25) 15px 15px 2px 0px"
+  },
+  pending: {
+    boxShadow:
+      "rgba(239, 185, 83, 0.9) 5px 5px 2px 0px, rgba(239, 185, 83, 0.5) 10px 10px 2px 0px,rgba(239, 185, 83, 0.25) 15px 15px 2px 0px"
+  },
+  done: {
+    boxShadow:
+      "rgba(117, 230, 117, 0.9) 5px 5px 2px 0px, rgba(117, 230, 117, 0.5) 10px 10px 2px 0px,rgba(117, 230, 117, 0.25) 15px 15px 2px 0px"
+  }
+};
+
+const boxShadowDragging = {
+  new: {
+    boxShadow: "5px 5px 4px 0px rgba(177, 177, 247, 0.9)"
+  },
+  pending: {
+    boxShadow: "5px 5px 2px 0px rgba(239, 185, 83, 0.9)"
+  },
+  done: {
+    boxShadow: "5px 5px 2px 0px rgba(117, 230, 117, 0.9)"
+  }
+};
+
 function TodoItem({
   todo,
   index,
   tableDisabled,
   setTableDisabled,
   setCheckedItems,
-  checkedItems
+  checkedItems,
+  status,
+  indexTodo,
+  isDraggingOver
 }) {
   const dispatch = useDispatch();
   const [checked, setChecked] = useState(false);
@@ -62,40 +92,53 @@ function TodoItem({
               <div
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
-                ref={provided.innerRef}
-                className={tableDisabled ? styles.item__disabled : styles.item}>
-                <div className={styles.todoDetails}>
-                  <CheckButton
-                    checked={checked}
-                    handleCheck={handleCheck}
-                    disabled={tableDisabled}
-                    variant={
-                      tableDisabled ? "disabled" : "checkbox"
-                    }></CheckButton>
-                  <div className={styles.text}>
-                    <p className={styles.todoText}>{todo.title}</p>
-                    <p className={styles.time}>{time}</p>
+                ref={provided.innerRef}>
+                <div
+                  style={
+                    isDraggingOver
+                      ? checkedItems.size > 1 && snapshot.isDragging
+                        ? boxMultipleShadowDragging[status]
+                        : boxShadowDragging[status]
+                      : { boxShadow: "0px 0px 0px 0px" }
+                  }>
+                  <div
+                    className={
+                      tableDisabled ? styles.item__disabled : styles.item
+                    }>
+                    <div className={styles.todoDetails}>
+                      <CheckButton
+                        checked={checked}
+                        handleCheck={handleCheck}
+                        disabled={tableDisabled}
+                        variant={
+                          tableDisabled ? "disabled" : "checkbox"
+                        }></CheckButton>
+                      <div className={styles.text}>
+                        <p className={styles.todoText}>{todo.title}</p>
+                        <p className={styles.time}>{time}</p>
+                      </div>
+                    </div>
+                    <div className={styles.todoActions}>
+                      <Button
+                        disabled={tableDisabled}
+                        variant={tableDisabled ? "disabled" : "edit"}
+                        className={styles.icon}
+                        onClick={handleDelete}
+                        type='button'>
+                        <MdDelete />
+                      </Button>
+                      <Button
+                        disabled={tableDisabled}
+                        variant={tableDisabled ? "disabled" : "edit"}
+                        onClick={() => {
+                          setTableDisabled(true);
+                          setIsEdit(true);
+                        }}
+                        type='button'>
+                        <MdEdit />
+                      </Button>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.todoActions}>
-                  <Button
-                    disabled={tableDisabled}
-                    variant={tableDisabled ? "disabled" : "edit"}
-                    className={styles.icon}
-                    onClick={handleDelete}
-                    type='button'>
-                    <MdDelete />
-                  </Button>
-                  <Button
-                    disabled={tableDisabled}
-                    variant={tableDisabled ? "disabled" : "edit"}
-                    onClick={() => {
-                      setTableDisabled(true);
-                      setIsEdit(true);
-                    }}
-                    type='button'>
-                    <MdEdit />
-                  </Button>
                 </div>
               </div>
             </>

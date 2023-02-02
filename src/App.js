@@ -7,16 +7,14 @@ import { Toaster } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { updateTodo } from "./slices/todoSlice";
 import { DragDropContext } from "react-beautiful-dnd";
-
 function App() {
   const [searchValue, setSearchValue] = useState("");
   const [tableDisabled, setTableDisabled] = useState(false);
   const [checkedItems, setCheckedItems] = useState(() => new Set());
   const [indexTodo, setIndexTodo] = useState({});
+  console.log("indexTodo", indexTodo);
 
   const dispatch = useDispatch();
-
-  const onDragStart = (provided) => {};
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
@@ -32,14 +30,14 @@ function App() {
     if (status === source.droppableId && destination.index !== source.index) {
       setIndexTodo({
         newIndex: destination.index,
-        lastIndex: source.index,
+        prevIndex: source.index,
         id: result.draggableId,
         status: status
       });
       return;
     }
 
-    if (checkedItems.size > 1) {
+    if (checkedItems.size > 1 && checkedItems.has(result.draggableId)) {
       checkedItems.forEach((item) => {
         dispatch(
           updateTodo({
@@ -51,14 +49,15 @@ function App() {
         setCheckedItems(() => new Set());
       });
     } else {
-      dispatch(
-        updateTodo({
-          id: result.draggableId,
-          status: status,
-          time: new Date().toUTCString()
-        })
-      );
-      setCheckedItems(() => new Set());
+      setIndexTodo({
+        newIndex: destination.index,
+        prevIndex: source.index,
+        id: result.draggableId,
+        status: status
+      });
+      if (checkedItems.has(result.draggableId)) {
+        setCheckedItems(() => new Set());
+      }
     }
   };
   return (
@@ -70,9 +69,7 @@ function App() {
             setSearchValue={setSearchValue}
             tableDisabled={tableDisabled}
           />
-          <DragDropContext
-            onDragStart={onDragStart}
-            onDragEnd={onDragEnd}>
+          <DragDropContext onDragEnd={onDragEnd}>
             <AppContent
               searchValue={searchValue}
               tableDisabled={tableDisabled}
