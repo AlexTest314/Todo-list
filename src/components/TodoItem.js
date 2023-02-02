@@ -45,7 +45,6 @@ function TodoItem({
   setCheckedItems,
   checkedItems,
   status,
-  indexTodo,
   isDraggingOver
 }) {
   const dispatch = useDispatch();
@@ -55,7 +54,7 @@ function TodoItem({
   const time = format(new Date(todo.time), "p, MM/dd/yyyy");
 
   const handleDelete = () => {
-    dispatch(deleteTodo(todo.id));
+    dispatch(deleteTodo({ id: todo.id, status: todo.status }));
     toast.success("Todo Deleted Successfully");
   };
 

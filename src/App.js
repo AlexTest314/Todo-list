@@ -5,15 +5,15 @@ import PageTitle from "./components/PageTitle";
 import styles from "./styles/modules/app.module.scss";
 import { Toaster } from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { updateTodo } from "./slices/todoSlice";
+import { updateOrderListTodo, updateOrderTodo } from "./slices/todoSlice";
 import { DragDropContext } from "react-beautiful-dnd";
+
 function App() {
   const [searchValue, setSearchValue] = useState("");
   const [tableDisabled, setTableDisabled] = useState(false);
   const [checkedItems, setCheckedItems] = useState(() => new Set());
-  const [indexTodo, setIndexTodo] = useState({});
-  console.log("indexTodo", indexTodo);
 
+  console.log("checkedItems", checkedItems);
   const dispatch = useDispatch();
 
   const onDragEnd = (result) => {
@@ -28,36 +28,38 @@ function App() {
       return;
     }
     if (status === source.droppableId && destination.index !== source.index) {
-      setIndexTodo({
-        newIndex: destination.index,
-        prevIndex: source.index,
-        id: result.draggableId,
-        status: status
-      });
+      dispatch(
+        updateOrderTodo({
+          id: result.draggableId,
+          prevStatus: source.droppableId,
+          newStatus: status,
+          prevIndex: source.index,
+          newIndex: destination.index
+        })
+      );
       return;
     }
 
-    if (checkedItems.size > 1 && checkedItems.has(result.draggableId)) {
-      checkedItems.forEach((item) => {
-        dispatch(
-          updateTodo({
-            id: item,
-            status: status,
-            time: new Date().toUTCString()
-          })
-        );
-        setCheckedItems(() => new Set());
-      });
+    if (checkedItems.size > 1) {
+      dispatch(
+        updateOrderListTodo({
+          id: checkedItems,
+          prevStatus: source.droppableId,
+          newStatus: status
+        })
+      );
+
+      setCheckedItems(() => new Set());
     } else {
-      setIndexTodo({
-        newIndex: destination.index,
-        prevIndex: source.index,
-        id: result.draggableId,
-        status: status
-      });
-      if (checkedItems.has(result.draggableId)) {
-        setCheckedItems(() => new Set());
-      }
+      dispatch(
+        updateOrderTodo({
+          id: result.draggableId,
+          prevStatus: source.droppableId,
+          newStatus: status,
+          prevIndex: source.index,
+          newIndex: destination.index
+        })
+      );
     }
   };
   return (
@@ -76,8 +78,6 @@ function App() {
               setTableDisabled={setTableDisabled}
               checkedItems={checkedItems}
               setCheckedItems={setCheckedItems}
-              indexTodo={indexTodo}
-              setIndexTodo={setIndexTodo}
             />
           </DragDropContext>
         </div>

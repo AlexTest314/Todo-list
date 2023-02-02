@@ -23,9 +23,7 @@ function Column({
   setTableDisabled,
   filteredList,
   setCheckedItems,
-  checkedItems,
-  indexTodo,
-  setIndexTodo
+  checkedItems
 }) {
   const filterTitles = filteredList.filter((todo) => {
     if (inputValue === "") {
@@ -70,7 +68,6 @@ function Column({
                         status={status}
                         setCheckedItems={setCheckedItems}
                         checkedItems={checkedItems}
-                        indexTodo={indexTodo}
                         isDraggingOver={snapshot.isDraggingOver}
                       />
                     ))}
