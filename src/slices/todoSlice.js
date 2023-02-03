@@ -5,8 +5,19 @@ const getInitialTodo = () => {
   if (localTodoList) {
     return JSON.parse(localTodoList);
   }
-  window.localStorage.setItem("todoList", JSON.stringify([]));
-  return [];
+  window.localStorage.setItem(
+    "todoList",
+    JSON.stringify({
+      new: [],
+      pending: [],
+      done: []
+    })
+  );
+  return {
+    new: [],
+    pending: [],
+    done: []
+  };
 };
 
 const initialValue = {
@@ -19,30 +30,91 @@ export const todoSlice = createSlice({
   initialState: initialValue,
   reducers: {
     addTodo: (state, action) => {
-      state.todoList.push(action.payload);
       const todoList = window.localStorage.getItem("todoList");
       if (todoList) {
         const todoListArr = JSON.parse(todoList);
-        todoListArr.push({
-          ...action.payload
-        });
+
+        todoListArr[action.payload.status].push(action.payload);
         window.localStorage.setItem("todoList", JSON.stringify(todoListArr));
-      } else {
-        window.localStorage.setItem(
-          "todoList",
-          JSON.stringify([{ ...action.payload }])
-        );
+        state.todoList = todoListArr;
       }
     },
     deleteTodo: (state, action) => {
       const todoList = window.localStorage.getItem("todoList");
       if (todoList) {
         const todoListArr = JSON.parse(todoList);
-        todoListArr.forEach((todo, index) => {
-          if (todo.id === action.payload) {
-            todoListArr.splice(index, 1);
+        todoListArr[action.payload.status].forEach((todo, index) => {
+          if (todo.id === action.payload.id) {
+            todoListArr[action.payload.status].splice(index, 1);
           }
         });
+        window.localStorage.setItem("todoList", JSON.stringify(todoListArr));
+        state.todoList = todoListArr;
+      }
+    },
+    updateOrderTodo: (state, action) => {
+      const todoList = window.localStorage.getItem("todoList");
+      if (todoList) {
+        const todoListArr = JSON.parse(todoList);
+
+        const prevStatusArr = action.payload.status[0];
+        const newStatus = action.payload.status[1];
+        const prevIndex = action.payload.index[0];
+        const newIndex = action.payload.index[1];
+
+        const [transportedTodo] = todoListArr[prevStatusArr].splice(
+          prevIndex,
+          1
+        );
+        transportedTodo.status = newStatus;
+        transportedTodo.time = new Date().toUTCString();
+
+        const removedTodos = todoListArr[newStatus].splice(newIndex);
+
+        removedTodos
+          ? todoListArr[newStatus].splice(
+              newIndex,
+              0,
+              transportedTodo,
+              ...removedTodos
+            )
+          : todoListArr[newStatus].splice(newIndex, 0, transportedTodo);
+
+        window.localStorage.setItem("todoList", JSON.stringify(todoListArr));
+        state.todoList = todoListArr;
+      }
+    },
+    updateOrderListTodo: (state, action) => {
+      const todoList = window.localStorage.getItem("todoList");
+      const todoListArr = JSON.parse(todoList);
+      if (todoList) {
+        const prevStatus = action.payload.status[0];
+        const newStatus = action.payload.status[1];
+        let prevIndex;
+        const stepIndex = action.payload.index[1];
+        const newIndex = action.payload.index[0] + stepIndex;
+
+        todoListArr[prevStatus].forEach((todo, index) => {
+          if (todo.id === action.payload.id) {
+            prevIndex = index;
+          }
+        });
+
+        const [transportedTodo] = todoListArr[prevStatus].splice(prevIndex, 1);
+        transportedTodo.status = newStatus;
+        transportedTodo.time = new Date().toUTCString();
+
+        const removedTodos = todoListArr[newStatus].splice(newIndex);
+
+        removedTodos
+          ? todoListArr[newStatus].splice(
+              newIndex,
+              0,
+              transportedTodo,
+              ...removedTodos
+            )
+          : todoListArr[newStatus].splice(newIndex, 0, transportedTodo);
+
         window.localStorage.setItem("todoList", JSON.stringify(todoListArr));
         state.todoList = todoListArr;
       }
@@ -51,21 +123,31 @@ export const todoSlice = createSlice({
       const todoList = window.localStorage.getItem("todoList");
       if (todoList) {
         const todoListArr = JSON.parse(todoList);
-        todoListArr.forEach((todo, index) => {
+        todoListArr[action.payload.status].forEach((todo, index) => {
           if (todo.id === action.payload.id) {
-            todoListArr[index] = { ...todo, ...action.payload };
+            todoListArr[action.payload.status][index] = {
+              ...todo,
+              ...action.payload
+            };
           }
         });
         window.localStorage.setItem("todoList", JSON.stringify(todoListArr));
         state.todoList = todoListArr;
       }
     },
+
     editSearchFilter: (state, action) => {
       state.inputValue = action.payload;
     }
   }
 });
 
-export const { addTodo, deleteTodo, updateTodo, editSearchFilter } =
-  todoSlice.actions;
+export const {
+  addTodo,
+  deleteTodo,
+  updateTodo,
+  editSearchFilter,
+  updateOrderTodo,
+  updateOrderListTodo
+} = todoSlice.actions;
 export default todoSlice.reducer;

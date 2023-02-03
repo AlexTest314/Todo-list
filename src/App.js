@@ -4,67 +4,97 @@ import AppHeader from "./components/AppHeader";
 import PageTitle from "./components/PageTitle";
 import styles from "./styles/modules/app.module.scss";
 import { Toaster } from "react-hot-toast";
-import { todoListInit } from "./app/utils";
-import { useSelector } from "react-redux";
-import { STATUS_DONE, STATUS_NEW, STATUS_PENDING } from "./app/statuses";
 import { useDispatch } from "react-redux";
-import { updateTodo } from "./slices/todoSlice";
+import { updateOrderListTodo, updateOrderTodo } from "./slices/todoSlice";
 import { DragDropContext } from "react-beautiful-dnd";
 
 function App() {
-  const todoList = useSelector(todoListInit);
   const [searchValue, setSearchValue] = useState("");
   const [tableDisabled, setTableDisabled] = useState(false);
+  const [draggableIdTodo, setDraggableIdTodo] = useState();
   const [checkedItems, setCheckedItems] = useState(() => new Set());
-
-  const filteredTodos = todoList.reduce(
-    (todo, item) => {
-      todo[`${item.status}`].push(item);
-      return todo;
-    },
-    {
-      [STATUS_NEW]: [],
-      [STATUS_PENDING]: [],
-      [STATUS_DONE]: []
-    }
-  );
+  console.log("checkedItems", checkedItems);
+  console.log("draggableIdTodo", draggableIdTodo);
 
   const dispatch = useDispatch();
 
-  const onDragStart = (provided) => {};
+  const onDragStart = (result) => {
+    if (checkedItems.size > 1) {
+      setDraggableIdTodo(result.draggableId);
+    }
+  };
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
 
-    const id = destination.droppableId;
+    const prevStatus = source.droppableId;
+    const prevIndex = source.index;
+    const newStatus = destination.droppableId;
+    const newIndex = destination.index;
 
     if (!destination) {
       return;
     }
-    if (id === source.droppableId && destination.index === source.index) {
+    if (newStatus === prevStatus && newIndex === prevIndex) {
+      if (checkedItems.size > 1) {
+        setCheckedItems(() => new Set());
+      }
+
+      setDraggableIdTodo(undefined);
+      return;
+    }
+    if (newStatus === prevStatus && newIndex !== prevIndex) {
+      if (checkedItems.size > 1 && checkedItems.has(result.draggableId)) {
+        Array.from(checkedItems).forEach((item, index) => {
+          dispatch(
+            updateOrderListTodo({
+              id: item,
+              status: [prevStatus, newStatus],
+              index: [newIndex, index]
+            })
+          );
+        });
+        setCheckedItems(() => new Set());
+      } else {
+        dispatch(
+          updateOrderTodo({
+            id: result.draggableId,
+            status: [prevStatus, newStatus],
+            index: [prevIndex, newIndex]
+          })
+        );
+        if (checkedItems.has(result.draggableId)) {
+          setCheckedItems(() => new Set());
+        }
+      }
+      setDraggableIdTodo(undefined);
       return;
     }
 
-    if (checkedItems.size > 1) {
-      checkedItems.forEach((item) => {
+    if (checkedItems.size > 1 && checkedItems.has(result.draggableId)) {
+      Array.from(checkedItems).forEach((item, index) => {
         dispatch(
-          updateTodo({
+          updateOrderListTodo({
             id: item,
-            status: id,
-            time: new Date().toUTCString()
+            status: [prevStatus, newStatus],
+            index: [newIndex, index]
           })
         );
-        setCheckedItems(() => new Set());
       });
+      setCheckedItems(() => new Set());
     } else {
       dispatch(
-        updateTodo({
+        updateOrderTodo({
           id: result.draggableId,
-          status: id,
-          time: new Date().toUTCString()
+          status: [prevStatus, newStatus],
+          index: [prevIndex, newIndex]
         })
       );
+      if (checkedItems.has(result.draggableId)) {
+        setCheckedItems(() => new Set());
+      }
     }
+    setDraggableIdTodo(undefined);
   };
   return (
     <>
@@ -82,9 +112,9 @@ function App() {
               searchValue={searchValue}
               tableDisabled={tableDisabled}
               setTableDisabled={setTableDisabled}
-              filteredTodos={filteredTodos}
               checkedItems={checkedItems}
               setCheckedItems={setCheckedItems}
+              draggableIdTodo={draggableIdTodo}
             />
           </DragDropContext>
         </div>
@@ -93,7 +123,8 @@ function App() {
         position='bottom-right'
         toastOption={{
           style: {
-            fontSize: "1.4rem"
+            fontSize: "1.4rem",
+            right: "10px"
           }
         }}
       />

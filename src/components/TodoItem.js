@@ -10,22 +10,65 @@ import Button from "./Button";
 import { Draggable } from "react-beautiful-dnd";
 import CheckButton from "./CheckButton";
 
+const stColors = {
+  new: "177, 177, 247",
+  pending: "239, 185, 83",
+  done: "117, 230, 117"
+};
+
+const boxSha = {
+  top: "5px 5px 2px 0px",
+  mid: " 10px 10px 2px 0px",
+  bot: "15px 15px 2px 0px"
+};
+
+const boxShadowDragging = {
+  new: {
+    multy: {
+      boxShadow: `rgba(${stColors.new}, 0.9) ${boxSha.top}, rgba(${stColors.new}, 0.5) ${boxSha.mid},rgba(${stColors.new}, 0.25) ${boxSha.bot}`
+    },
+    single: {
+      boxShadow: `${boxSha.top} rgba(${stColors.new}, 0.9)`
+    }
+  },
+
+  pending: {
+    multy: {
+      boxShadow: `rgba(${stColors.pending}, 0.9) ${boxSha.top}, rgba(${stColors.pending}, 0.5) ${boxSha.mid},rgba(${stColors.pending}, 0.25) ${boxSha.bot}`
+    },
+    single: {
+      boxShadow: `${boxSha.top} rgba(${stColors.pending}, 0.9)`
+    }
+  },
+  done: {
+    multy: {
+      boxShadow: `rgba(${stColors.done}, 0.9) ${boxSha.top}, rgba(${stColors.done}, 0.5) ${boxSha.mid},rgba(${stColors.done}, 0.25) ${boxSha.bot}`
+    },
+    single: {
+      boxShadow: `${boxSha.top} rgba(${stColors.done}, 0.9)`
+    }
+  }
+};
+
 function TodoItem({
   todo,
   index,
   tableDisabled,
   setTableDisabled,
   setCheckedItems,
-  checkedItems
+  checkedItems,
+  status,
+  isDraggingOver,
+  draggableIdTodo
 }) {
   const dispatch = useDispatch();
-  const [checked, setChecked] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
 
+  const [isEdit, setIsEdit] = useState(false);
+  const [checked, setChecked] = useState(false);
   const time = format(new Date(todo.time), "p, MM/dd/yyyy");
 
   const handleDelete = () => {
-    dispatch(deleteTodo(todo.id));
+    dispatch(deleteTodo({ id: todo.id, status: todo.status }));
     toast.success("Todo Deleted Successfully");
   };
 
@@ -41,8 +84,10 @@ function TodoItem({
         }
       });
     }
+
     setCheckedItems(() => new Set(copy));
   };
+
   return (
     <>
       {isEdit ? (
@@ -55,46 +100,88 @@ function TodoItem({
         <Draggable
           key={todo.id}
           draggableId={todo.id}
-          index={index}>
+          index={index}
+          isDragDisabled={tableDisabled ? true : false}>
           {(provided, snapshot) => (
             <>
               <div
                 {...provided.draggableProps}
                 {...provided.dragHandleProps}
-                ref={provided.innerRef}
-                className={tableDisabled ? styles.item__disabled : styles.item}>
-                <div className={styles.todoDetails}>
-                  <CheckButton
-                    checked={checked}
-                    handleCheck={handleCheck}
-                    disabled={tableDisabled}
-                    variant={
-                      tableDisabled ? "disabled" : "checkbox"
-                    }></CheckButton>
-                  <div className={styles.text}>
-                    <p className={styles.todoText}>{todo.title}</p>
-                    <p className={styles.time}>{time}</p>
+                ref={provided.innerRef}>
+                <div
+                  style={
+                    isDraggingOver
+                      ? checkedItems.size > 1 && snapshot.isDragging
+                        ? boxShadowDragging[status].multy
+                        : boxShadowDragging[status].single
+                      : { boxShadow: "0px 0px 0px 0px" }
+                  }>
+                  <div
+                    style={
+                      draggableIdTodo
+                        ? draggableIdTodo !== todo.id &&
+                          checkedItems.has(todo.id)
+                          ? { display: "none" }
+                          : { display: "flex" }
+                        : { display: "flex" }
+                    }
+                    className={
+                      tableDisabled ? styles.item__disabled : styles.item
+                    }>
+                    <div className={styles.todoDetails}>
+                      <CheckButton
+                        checked={checkedItems.has(todo.id) ? true : false}
+                        handleCheck={tableDisabled ? () => {} : handleCheck}
+                        variant={
+                          tableDisabled ? "disabled" : "checkbox"
+                        }></CheckButton>
+                      <div className={styles.text}>
+                        <p className={styles.todoText}>{todo.title}</p>
+                        <p className={styles.time}>{time}</p>
+                      </div>
+                    </div>
+                    <div
+                      className={styles.todoActions}
+                      style={{ position: "relative" }}>
+                      <Button
+                        disabled={tableDisabled}
+                        variant={tableDisabled ? "disabled" : "edit"}
+                        className={styles.icon}
+                        onClick={handleDelete}
+                        type='button'>
+                        <MdDelete />
+                      </Button>
+                      <Button
+                        disabled={tableDisabled}
+                        variant={tableDisabled ? "disabled" : "edit"}
+                        onClick={() => {
+                          setTableDisabled(true);
+                          setIsEdit(true);
+                        }}
+                        type='button'>
+                        <MdEdit />
+                      </Button>
+                      <div
+                        style={
+                          draggableIdTodo
+                            ? draggableIdTodo === todo.id
+                              ? {
+                                  width: "15px",
+                                  height: "15px",
+                                  backgroundColor: `rgb(${stColors[status]})`,
+                                  borderRadius: "10px",
+                                  textAlign: "center",
+                                  position: "absolute",
+                                  left: "91px",
+                                  top: "39px"
+                                }
+                              : { display: "none" }
+                            : { display: "none" }
+                        }>
+                        {checkedItems.size}
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className={styles.todoActions}>
-                  <Button
-                    disabled={tableDisabled}
-                    variant={tableDisabled ? "disabled" : "edit"}
-                    className={styles.icon}
-                    onClick={handleDelete}
-                    type='button'>
-                    <MdDelete />
-                  </Button>
-                  <Button
-                    disabled={tableDisabled}
-                    variant={tableDisabled ? "disabled" : "edit"}
-                    onClick={() => {
-                      setTableDisabled(true);
-                      setIsEdit(true);
-                    }}
-                    type='button'>
-                    <MdEdit />
-                  </Button>
                 </div>
               </div>
             </>

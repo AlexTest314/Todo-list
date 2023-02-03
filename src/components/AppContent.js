@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { STATUS_NEW, STATUS_PENDING, STATUS_DONE } from "../app/statuses";
+//import { STATUS_DONE, STATUS_NEW, STATUS_PENDING } from "../app/statuses";
 import { todoListInit } from "../app/utils";
 import styles from "../styles/modules/app.module.scss";
 import Column from "./Column";
@@ -9,26 +9,15 @@ function AppContent({
   tableDisabled,
   setTableDisabled,
   checkedItems,
-  setCheckedItems
+  setCheckedItems,
+  draggableIdTodo
 }) {
   const todoList = useSelector(todoListInit);
-
-  const filteredTodos = todoList.reduce(
-    (todo, item) => {
-      todo[`${item.status}`].push(item);
-      return todo;
-    },
-    {
-      [STATUS_NEW]: [],
-      [STATUS_PENDING]: [],
-      [STATUS_DONE]: []
-    }
-  );
 
   return (
     <>
       <div className={styles.contentStatus__wrapper}>
-        {Object.entries(filteredTodos).map((columnStatus, index) => {
+        {Object.entries(todoList).map((columnStatus, index) => {
           return (
             <Column
               key={index}
@@ -40,6 +29,7 @@ function AppContent({
               index={index}
               setCheckedItems={setCheckedItems}
               checkedItems={checkedItems}
+              draggableIdTodo={draggableIdTodo}
             />
           );
         })}
