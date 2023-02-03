@@ -19,33 +19,34 @@ function App() {
   const onDragEnd = (result) => {
     const { source, destination } = result;
 
-    const status = destination.droppableId;
+    const prevStatus = source.droppableId;
+    const prevIndex = source.index;
+    const newStatus = destination.droppableId;
+    const newIndex = destination.index;
 
     if (!destination) {
       return;
     }
-    if (status === source.droppableId && destination.index === source.index) {
+    if (newStatus === prevStatus && newIndex === prevIndex) {
       return;
     }
-    if (status === source.droppableId && destination.index !== source.index) {
+    if (newStatus === prevStatus && newIndex !== prevIndex) {
       dispatch(
         updateOrderTodo({
           id: result.draggableId,
-          prevStatus: source.droppableId,
-          newStatus: status,
-          prevIndex: source.index,
-          newIndex: destination.index
+          status: [prevStatus, newStatus],
+          index: [prevIndex, newIndex]
         })
       );
       return;
     }
 
-    if (checkedItems.size > 1) {
+    if (checkedItems.size > 1 && checkedItems.has()) {
       dispatch(
         updateOrderListTodo({
           id: checkedItems,
-          prevStatus: source.droppableId,
-          newStatus: status
+          prevStatus: prevStatus,
+          newStatus: newStatus
         })
       );
 
@@ -54,10 +55,8 @@ function App() {
       dispatch(
         updateOrderTodo({
           id: result.draggableId,
-          prevStatus: source.droppableId,
-          newStatus: status,
-          prevIndex: source.index,
-          newIndex: destination.index
+          status: [prevStatus, newStatus],
+          index: [prevIndex, newIndex]
         })
       );
     }
