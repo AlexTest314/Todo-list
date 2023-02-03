@@ -9,7 +9,8 @@ function AppContent({
   tableDisabled,
   setTableDisabled,
   checkedItems,
-  setCheckedItems
+  setCheckedItems,
+  draggableIdTodo
 }) {
   const todoList = useSelector(todoListInit);
 
@@ -28,6 +29,7 @@ function AppContent({
               index={index}
               setCheckedItems={setCheckedItems}
               checkedItems={checkedItems}
+              draggableIdTodo={draggableIdTodo}
             />
           );
         })}

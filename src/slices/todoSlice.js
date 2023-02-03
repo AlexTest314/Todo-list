@@ -88,15 +88,19 @@ export const todoSlice = createSlice({
       const todoList = window.localStorage.getItem("todoList");
       const todoListArr = JSON.parse(todoList);
       if (todoList) {
-        const prevStatusArr = action.payload.status[0];
+        const prevStatus = action.payload.status[0];
         const newStatus = action.payload.status[1];
-        const prevIndex = action.payload.index[0];
-        const newIndex = action.payload.index[1];
+        let prevIndex;
+        const stepIndex = action.payload.index[1];
+        const newIndex = action.payload.index[0] + stepIndex;
 
-        const [transportedTodo] = todoListArr[prevStatusArr].splice(
-          prevIndex,
-          1
-        );
+        todoListArr[prevStatus].forEach((todo, index) => {
+          if (todo.id === action.payload.id) {
+            prevIndex = index;
+          }
+        });
+
+        const [transportedTodo] = todoListArr[prevStatus].splice(prevIndex, 1);
         transportedTodo.status = newStatus;
         transportedTodo.time = new Date().toUTCString();
 
@@ -110,35 +114,6 @@ export const todoSlice = createSlice({
               ...removedTodos
             )
           : todoListArr[newStatus].splice(newIndex, 0, transportedTodo);
-
-        /*  const prevStatus = todoListArr[action.payload.status[0]];
-        const newStatus = todoListArr[action.payload.status[1]];
-        const newIndex = action.payload.index[1];
-
-        const deletedTodo = prevStatus.reduce((res, todo, index) => {
-          if (action.payload.id.has(todo.id)) {
-            prevStatus.splice(index, 1);
-            res = res + todo;
-            return res;
-          }
-          return res;
-        }, []);
-
-        console.log("deletedTodo", deletedTodo);
-        deletedTodo.forEach((item) => {
-          item.status = action.payload.newStatus;
-          item.time = new Date().toUTCString();
-        });
-
-        console.log("deletedTodo", deletedTodo);
-
-        const removed = newStatus.splice(newIndex);
-
-        console.log("removed", removed);
-
-        removed
-          ? newStatus.splice(newIndex, 0, deletedTodo, ...removed)
-          : newStatus.splice(newIndex, 0, deletedTodo); */
 
         window.localStorage.setItem("todoList", JSON.stringify(todoListArr));
         state.todoList = todoListArr;

@@ -11,10 +11,18 @@ import { DragDropContext } from "react-beautiful-dnd";
 function App() {
   const [searchValue, setSearchValue] = useState("");
   const [tableDisabled, setTableDisabled] = useState(false);
+  const [draggableIdTodo, setDraggableIdTodo] = useState();
   const [checkedItems, setCheckedItems] = useState(() => new Set());
-
   console.log("checkedItems", checkedItems);
+  console.log("draggableIdTodo", draggableIdTodo);
+
   const dispatch = useDispatch();
+
+  const onDragStart = (result) => {
+    if (checkedItems.size > 1) {
+      setDraggableIdTodo(result.draggableId);
+    }
+  };
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
@@ -28,28 +36,51 @@ function App() {
       return;
     }
     if (newStatus === prevStatus && newIndex === prevIndex) {
+      if (checkedItems.size > 1) {
+        setCheckedItems(() => new Set());
+      }
+
+      setDraggableIdTodo(undefined);
       return;
     }
     if (newStatus === prevStatus && newIndex !== prevIndex) {
-      dispatch(
-        updateOrderTodo({
-          id: result.draggableId,
-          status: [prevStatus, newStatus],
-          index: [prevIndex, newIndex]
-        })
-      );
+      if (checkedItems.size > 1 && checkedItems.has(result.draggableId)) {
+        Array.from(checkedItems).forEach((item, index) => {
+          dispatch(
+            updateOrderListTodo({
+              id: item,
+              status: [prevStatus, newStatus],
+              index: [newIndex, index]
+            })
+          );
+        });
+        setCheckedItems(() => new Set());
+      } else {
+        dispatch(
+          updateOrderTodo({
+            id: result.draggableId,
+            status: [prevStatus, newStatus],
+            index: [prevIndex, newIndex]
+          })
+        );
+        if (checkedItems.has(result.draggableId)) {
+          setCheckedItems(() => new Set());
+        }
+      }
+      setDraggableIdTodo(undefined);
       return;
     }
 
-    if (checkedItems.size > 1 && checkedItems.has()) {
-      dispatch(
-        updateOrderListTodo({
-          id: checkedItems,
-          prevStatus: prevStatus,
-          newStatus: newStatus
-        })
-      );
-
+    if (checkedItems.size > 1 && checkedItems.has(result.draggableId)) {
+      Array.from(checkedItems).forEach((item, index) => {
+        dispatch(
+          updateOrderListTodo({
+            id: item,
+            status: [prevStatus, newStatus],
+            index: [newIndex, index]
+          })
+        );
+      });
       setCheckedItems(() => new Set());
     } else {
       dispatch(
@@ -59,7 +90,11 @@ function App() {
           index: [prevIndex, newIndex]
         })
       );
+      if (checkedItems.has(result.draggableId)) {
+        setCheckedItems(() => new Set());
+      }
     }
+    setDraggableIdTodo(undefined);
   };
   return (
     <>
@@ -70,13 +105,16 @@ function App() {
             setSearchValue={setSearchValue}
             tableDisabled={tableDisabled}
           />
-          <DragDropContext onDragEnd={onDragEnd}>
+          <DragDropContext
+            onDragStart={onDragStart}
+            onDragEnd={onDragEnd}>
             <AppContent
               searchValue={searchValue}
               tableDisabled={tableDisabled}
               setTableDisabled={setTableDisabled}
               checkedItems={checkedItems}
               setCheckedItems={setCheckedItems}
+              draggableIdTodo={draggableIdTodo}
             />
           </DragDropContext>
         </div>

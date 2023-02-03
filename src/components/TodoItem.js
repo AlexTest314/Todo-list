@@ -10,30 +10,43 @@ import Button from "./Button";
 import { Draggable } from "react-beautiful-dnd";
 import CheckButton from "./CheckButton";
 
-const boxMultipleShadowDragging = {
-  new: {
-    boxShadow:
-      "rgba(177, 177, 247, 0.9) 5px 5px 2px 0px, rgba(177, 177, 247, 0.5) 10px 10px 2px 0px,rgba(177, 177, 247, 0.25) 15px 15px 2px 0px"
-  },
-  pending: {
-    boxShadow:
-      "rgba(239, 185, 83, 0.9) 5px 5px 2px 0px, rgba(239, 185, 83, 0.5) 10px 10px 2px 0px,rgba(239, 185, 83, 0.25) 15px 15px 2px 0px"
-  },
-  done: {
-    boxShadow:
-      "rgba(117, 230, 117, 0.9) 5px 5px 2px 0px, rgba(117, 230, 117, 0.5) 10px 10px 2px 0px,rgba(117, 230, 117, 0.25) 15px 15px 2px 0px"
-  }
+const stColors = {
+  new: "177, 177, 247",
+  pending: "239, 185, 83",
+  done: "117, 230, 117"
+};
+
+const boxSha = {
+  top: "5px 5px 2px 0px",
+  mid: " 10px 10px 2px 0px",
+  bot: "15px 15px 2px 0px"
 };
 
 const boxShadowDragging = {
   new: {
-    boxShadow: "5px 5px 4px 0px rgba(177, 177, 247, 0.9)"
+    multy: {
+      boxShadow: `rgba(${stColors.new}, 0.9) ${boxSha.top}, rgba(${stColors.new}, 0.5) ${boxSha.mid},rgba(${stColors.new}, 0.25) ${boxSha.bot}`
+    },
+    single: {
+      boxShadow: `${boxSha.top} rgba(${stColors.new}, 0.9)`
+    }
   },
+
   pending: {
-    boxShadow: "5px 5px 2px 0px rgba(239, 185, 83, 0.9)"
+    multy: {
+      boxShadow: `rgba(${stColors.pending}, 0.9) ${boxSha.top}, rgba(${stColors.pending}, 0.5) ${boxSha.mid},rgba(${stColors.pending}, 0.25) ${boxSha.bot}`
+    },
+    single: {
+      boxShadow: `${boxSha.top} rgba(${stColors.pending}, 0.9)`
+    }
   },
   done: {
-    boxShadow: "5px 5px 2px 0px rgba(117, 230, 117, 0.9)"
+    multy: {
+      boxShadow: `rgba(${stColors.done}, 0.9) ${boxSha.top}, rgba(${stColors.done}, 0.5) ${boxSha.mid},rgba(${stColors.done}, 0.25) ${boxSha.bot}`
+    },
+    single: {
+      boxShadow: `${boxSha.top} rgba(${stColors.done}, 0.9)`
+    }
   }
 };
 
@@ -45,12 +58,13 @@ function TodoItem({
   setCheckedItems,
   checkedItems,
   status,
-  isDraggingOver
+  isDraggingOver,
+  draggableIdTodo
 }) {
   const dispatch = useDispatch();
-  const [checked, setChecked] = useState(false);
-  const [isEdit, setIsEdit] = useState(false);
 
+  const [isEdit, setIsEdit] = useState(false);
+  const [checked, setChecked] = useState(false);
   const time = format(new Date(todo.time), "p, MM/dd/yyyy");
 
   const handleDelete = () => {
@@ -70,6 +84,7 @@ function TodoItem({
         }
       });
     }
+
     setCheckedItems(() => new Set(copy));
   };
 
@@ -85,7 +100,8 @@ function TodoItem({
         <Draggable
           key={todo.id}
           draggableId={todo.id}
-          index={index}>
+          index={index}
+          isDragDisabled={tableDisabled ? true : false}>
           {(provided, snapshot) => (
             <>
               <div
@@ -96,19 +112,26 @@ function TodoItem({
                   style={
                     isDraggingOver
                       ? checkedItems.size > 1 && snapshot.isDragging
-                        ? boxMultipleShadowDragging[status]
-                        : boxShadowDragging[status]
+                        ? boxShadowDragging[status].multy
+                        : boxShadowDragging[status].single
                       : { boxShadow: "0px 0px 0px 0px" }
                   }>
                   <div
+                    style={
+                      draggableIdTodo
+                        ? draggableIdTodo !== todo.id &&
+                          checkedItems.has(todo.id)
+                          ? { display: "none" }
+                          : { display: "flex" }
+                        : { display: "flex" }
+                    }
                     className={
                       tableDisabled ? styles.item__disabled : styles.item
                     }>
                     <div className={styles.todoDetails}>
                       <CheckButton
-                        checked={checked}
-                        handleCheck={handleCheck}
-                        disabled={tableDisabled}
+                        checked={checkedItems.has(todo.id) ? true : false}
+                        handleCheck={tableDisabled ? () => {} : handleCheck}
                         variant={
                           tableDisabled ? "disabled" : "checkbox"
                         }></CheckButton>
@@ -117,7 +140,9 @@ function TodoItem({
                         <p className={styles.time}>{time}</p>
                       </div>
                     </div>
-                    <div className={styles.todoActions}>
+                    <div
+                      className={styles.todoActions}
+                      style={{ position: "relative" }}>
                       <Button
                         disabled={tableDisabled}
                         variant={tableDisabled ? "disabled" : "edit"}
@@ -136,6 +161,25 @@ function TodoItem({
                         type='button'>
                         <MdEdit />
                       </Button>
+                      <div
+                        style={
+                          draggableIdTodo
+                            ? draggableIdTodo === todo.id
+                              ? {
+                                  width: "15px",
+                                  height: "15px",
+                                  backgroundColor: `rgb(${stColors[status]})`,
+                                  borderRadius: "10px",
+                                  textAlign: "center",
+                                  position: "absolute",
+                                  left: "91px",
+                                  top: "39px"
+                                }
+                              : { display: "none" }
+                            : { display: "none" }
+                        }>
+                        {checkedItems.size}
+                      </div>
                     </div>
                   </div>
                 </div>
