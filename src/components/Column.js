@@ -69,7 +69,6 @@ function Column({
                         status={status}
                         setCheckedItems={setCheckedItems}
                         checkedItems={checkedItems}
-                        isDraggingOver={snapshot.isDraggingOver}
                         draggableIdTodo={draggableIdTodo}
                       />
                     ))}

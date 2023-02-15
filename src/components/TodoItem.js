@@ -10,12 +10,6 @@ import Button from "./Button";
 import { Draggable } from "react-beautiful-dnd";
 import CheckButton from "./CheckButton";
 
-const stColors = {
-  new: "177, 177, 247",
-  pending: "239, 185, 83",
-  done: "117, 230, 117"
-};
-
 const boxSha = {
   top: "5px 5px 2px 0px",
   mid: " 10px 10px 2px 0px",
@@ -23,30 +17,11 @@ const boxSha = {
 };
 
 const boxShadowDragging = {
-  new: {
-    multy: {
-      boxShadow: `rgba(${stColors.new}, 0.9) ${boxSha.top}, rgba(${stColors.new}, 0.5) ${boxSha.mid},rgba(${stColors.new}, 0.25) ${boxSha.bot}`
-    },
-    single: {
-      boxShadow: `${boxSha.top} rgba(${stColors.new}, 0.9)`
-    }
+  multy: {
+    boxShadow: `rgba(100, 102, 129, 0.9) ${boxSha.top}, rgba(100, 102, 129, 0.5) ${boxSha.mid},rgba(100, 102, 129, 0.25) ${boxSha.bot}`
   },
-
-  pending: {
-    multy: {
-      boxShadow: `rgba(${stColors.pending}, 0.9) ${boxSha.top}, rgba(${stColors.pending}, 0.5) ${boxSha.mid},rgba(${stColors.pending}, 0.25) ${boxSha.bot}`
-    },
-    single: {
-      boxShadow: `${boxSha.top} rgba(${stColors.pending}, 0.9)`
-    }
-  },
-  done: {
-    multy: {
-      boxShadow: `rgba(${stColors.done}, 0.9) ${boxSha.top}, rgba(${stColors.done}, 0.5) ${boxSha.mid},rgba(${stColors.done}, 0.25) ${boxSha.bot}`
-    },
-    single: {
-      boxShadow: `${boxSha.top} rgba(${stColors.done}, 0.9)`
-    }
+  single: {
+    boxShadow: `${boxSha.top} rgba(100, 102, 129, 0.9)`
   }
 };
 
@@ -57,8 +32,6 @@ function TodoItem({
   setTableDisabled,
   setCheckedItems,
   checkedItems,
-  status,
-  isDraggingOver,
   draggableIdTodo
 }) {
   const dispatch = useDispatch();
@@ -110,10 +83,10 @@ function TodoItem({
                 ref={provided.innerRef}>
                 <div
                   style={
-                    isDraggingOver
-                      ? checkedItems.size > 1 && snapshot.isDragging
-                        ? boxShadowDragging[status].multy
-                        : boxShadowDragging[status].single
+                    snapshot.isDragging
+                      ? checkedItems.size > 1
+                        ? boxShadowDragging.multy
+                        : boxShadowDragging.single
                       : { boxShadow: "0px 0px 0px 0px" }
                   }>
                   <div
@@ -168,7 +141,7 @@ function TodoItem({
                               ? {
                                   width: "15px",
                                   height: "15px",
-                                  backgroundColor: `rgb(${stColors[status]})`,
+                                  backgroundColor: `rgb(100, 102, 129)`,
                                   borderRadius: "10px",
                                   textAlign: "center",
                                   position: "absolute",

@@ -13,8 +13,6 @@ function App() {
   const [tableDisabled, setTableDisabled] = useState(false);
   const [draggableIdTodo, setDraggableIdTodo] = useState();
   const [checkedItems, setCheckedItems] = useState(() => new Set());
-  console.log("checkedItems", checkedItems);
-  console.log("draggableIdTodo", draggableIdTodo);
 
   const dispatch = useDispatch();
 
