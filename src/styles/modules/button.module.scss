@@ -1,0 +1,119 @@
+.button {
+  display: inline-block;
+  height: 40px;
+  width: 40px;
+  font-family: Poppins;
+  align-content: center;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 1.6rem;
+  text-decoration: none;
+  overflow: hidden;
+  background-color: transparent;
+}
+
+.button--primary {
+  background-color: var(--primaryPurple);
+  color: var(--white);
+  text-transform: capitalize;
+  cursor: pointer;
+  width: 150px;
+  padding: 1rem;
+  height: auto;
+  &__disabled {
+    background-color: var(--primaryPurple);
+    color: var(--white);
+    text-transform: capitalize;
+    width: 150px;
+    padding: 1rem;
+    height: auto;
+    opacity: 0.5;
+  }
+}
+
+.button--secondary {
+  background-color: var(--bg-3);
+  color: var(--black-1);
+  text-transform: capitalize;
+  cursor: pointer;
+  width: 150px;
+  padding: 1rem;
+  height: auto;
+}
+
+.button--agree {
+  font-size: 2rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: var(--bg-6);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s ease background-color;
+  &:hover {
+    background-color: #31ff03;
+  }
+}
+
+.button--desagree {
+  font-size: 2rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: #e32525;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s ease background-color;
+  &:hover {
+    background-color: #ff0000;
+  }
+}
+
+.button--delete {
+  font-size: 2rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: var(--gray-1);
+  color: var(--black-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s ease background-color;
+  &:hover {
+    background-color: var(--gray-2);
+  }
+}
+
+.button--edit {
+  font-size: 2rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: var(--gray-1);
+  color: var(--black-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s ease background-color;
+  &:hover {
+    background-color: var(--gray-2);
+  }
+}
+.button--disabled {
+  font-size: 2rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: var(--gray-1);
+  color: var(--black-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s ease background-color;
+  opacity: 0.5;
+}
